@@ -1,97 +1,144 @@
-console.log('displayDetails.js: Loaded');
+function displayCountryData(countryData) {
+    const panel = document.getElementById('country-panel');
+    const countryName = document.getElementById('country-name');
+    const dataList = document.getElementById('country-data');
 
-function displayPieChartForAgeAndGender(key, value, dataContainer) {
-    console.log(`displayPieChartForAgeAndGender: Rendering ${key}`, value);
-    try {
-        if (!dataContainer) {
-            console.error('dataContainer is null or undefined');
-            return;
-        }
-        const canvas = document.createElement('canvas');
-        canvas.id = `chart-${key}`;
-        canvas.className = 'pie-chart';
-        dataContainer.appendChild(canvas);
+    // Set country name
+    countryName.textContent = countryData.name || 'Unknown Country';
 
-        const labels = Object.keys(value);
-        const data = Object.values(value);
+    // Clear previous data
+    dataList.innerHTML = '';
 
-        if (!window.Chart) {
-            console.error('Chart.js is not loaded');
-            return;
-        }
-
-        new Chart(canvas, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6'],
-                    borderColor: '#ffffff',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' },
-                    title: { display: true, text: key.replace('_', ' ').toUpperCase(), color: '#ffffff' }
-                }
-            }
-        });
-        console.log(`displayPieChartForAgeAndGender: Successfully rendered ${key}`);
-    } catch (error) {
-        console.error(`displayPieChartForAgeAndGender: Error rendering ${key}`, error);
-    }
-}
-
-function displayCountryData(countryData, panel, countryName, dataContainer) {
-    console.log('displayCountryData: Starting', countryData);
-    try {
-        if (!dataContainer) {
-            console.error('displayCountryData: dataContainer is null or undefined');
-            return;
-        }
-        // Create a list for fields
-        const dataList = document.createElement('ul');
-        dataList.className = 'other-data';
-
-        // Fields to visualize as pie charts
-        const pieChartFields = ['age_distribution', 'gender_ratio'];
-        console.log('1');
-
-        // Handle each field
-        for (const [key, value] of Object.entries(countryData)) {
-            if (key === 'name') {
-                console.log('Skipping name');
-                continue;
-            }
-
-            // Render pie charts for age_distribution and gender_ratio
-            if (pieChartFields.includes(key) && typeof value === 'object' && value !== null) {
-                displayPieChartForAgeAndGender(key, value, dataContainer);
-            }
-
-            // Display all fields (including age_distribution and gender_ratio) in the list
+    // Display all fields
+    for (const [key, value] of Object.entries(countryData)) {
+        if (key !== 'name' && key !== 'age_distribution' && key !== 'gender_ratio' && key !== 'social_media_usage' && key !== 'literacy_rate') {
             const li = document.createElement('li');
-            const displayValue = typeof value === 'object' && value !== null
-                ? JSON.stringify(value, null, 2)
-                : value ?? 'N/A';
-            li.textContent = `${key}: ${displayValue}`;
+            const keySpan = document.createElement('span');
+            keySpan.className = 'data-key';
+            keySpan.textContent = `${key}:`;
+            li.appendChild(keySpan);
+
+            if (typeof value === 'object' && value !== null) {
+                const details = document.createElement('details');
+                const summary = document.createElement('summary');
+                summary.innerHTML = ` View ${key.replace(/_/g, ' ')}`;
+                details.appendChild(summary);
+
+                const table = document.createElement('table');
+                table.className = 'data-table';
+                
+                // Create table header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.innerHTML = '<th>Category</th><th>Details</th>';
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Create table body
+                const tbody = document.createElement('tbody');
+                for (const [nestedKey, nestedValue] of Object.entries(value)) {
+                    const row = document.createElement('tr');
+                    const keyCell = document.createElement('td');
+                    const valueCell = document.createElement('td');
+
+                    keyCell.textContent = nestedKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    
+                    if (Array.isArray(nestedValue)) {
+                        valueCell.innerHTML = nestedValue.map(item => 
+                            `<span class="array-value">${item}</span>`
+                        ).join(' ');
+                    } else if (typeof nestedValue === 'number') {
+                        valueCell.innerHTML = `<span class="number-value">${nestedValue.toLocaleString()}</span>`;
+                    } else if (typeof nestedValue === 'object' && nestedValue !== null) {
+                        valueCell.textContent = JSON.stringify(nestedValue, null, 2);
+                    } else {
+                        valueCell.textContent = nestedValue;
+                    }
+
+                    row.appendChild(keyCell);
+                    row.appendChild(valueCell);
+                    tbody.appendChild(row);
+                }
+                table.appendChild(tbody);
+                details.appendChild(table);
+                li.appendChild(details);
+                }else {
+                // Handle primitive values and arrays
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'data-value';
+                
+                if (Array.isArray(value)) {
+                    valueSpan.innerHTML = value.map(item => 
+                        `<span class="array-value">${item}</span>`
+                    ).join(' ');
+                } else if (typeof value === 'number') {
+                    valueSpan.innerHTML = `<span class="number-value">${value.toLocaleString()}</span>`;
+                } else {
+                    valueSpan.textContent = ` ${value ?? 'N/A'}`;
+                }
+                
+                li.appendChild(valueSpan);
+            }
+            
             dataList.appendChild(li);
         }
-
-        // Append the list of fields
-        if (dataList.children.length > 0) {
-            console.log('Appending fields list');
-            dataContainer.appendChild(dataList);
-        }
-
-        // Show the panel
-        console.log('Showing panel');
-        panel.classList.add('visible');
-        console.log('displayCountryData: Completed');
-    } catch (error) {
-        console.error('displayCountryData: Error', error);
     }
+
+    // Render pie charts
+    renderPieChart('age_distribution', countryData.age_distribution, 'Age Distribution');
+    const literacyRateData = {
+        'Literate': countryData.literacy_rate,
+        'Illiterate': 100 - countryData.literacy_rate
+    };
+    renderPieChart('literacy_rate', literacyRateData, 'Literacy Rate');
+    renderPieChart('gender_ratio', countryData.gender_ratio, 'Gender Ratio');
+    renderPieChart('social_media_usage', { 'Social Media': countryData.social_media_usage.Distribution }, 'Social Media Usage');
+
+    // Show the panel
+    panel.classList.add('visible');
+}
+
+let charts = {};
+
+// Function to render pie charts
+function renderPieChart(chartId, data, title) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+
+    if (charts[chartId]) {
+        charts[chartId].destroy();
+    }
+
+    const total = Object.values(data).reduce((a, b) => a + b, 0);
+    const modifiedData = { ...data }; 
+
+    
+    if (total < 100) {
+        modifiedData[""] = 100 - total; 
+    }
+
+    const chartData = {
+        labels: Object.keys(modifiedData),
+        datasets: [{
+            data: Object.values(modifiedData),
+            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#000000'],
+        }]
+    };
+
+        charts[chartId] = new Chart(ctx, {
+        type: 'pie',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: title
+                },
+            }
+        }
+    });
 }
