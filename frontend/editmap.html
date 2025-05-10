@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Country Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[readonly] {
+            background-color: #e9ecef;
+        }
+        button {
+            margin-top:5px;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.update {
+            background-color: #28a745; 
+            color: white;
+        }
+        button.update:hover {
+            background-color: #218838;
+        }
+        button.leave {
+            background-color: red; 
+            color: white;
+        }
+        button.leave:hover {
+            background-color: darkred;
+        }
+        .age-distribution {
+            display: flex;
+            justify-content: space-between;
+        }
+        .age-distribution input {
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Edit Country Data</h1>
+    <form id="edit-country-form">
+        <label for="countryid">Country ID</label>
+        <input type="text" id="countryid" name="countryid">
+        <button type="button" id="preview-btn" style="padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Preview Data</button>
+
+        <label for="name">Country Name</label>
+        <input type="text" id="name" name="name">
+
+        <label for="population">Population</label>
+        <input type="number" id="population" name="population">
+
+        <label>Age Distribution</label>
+        <div class="age-distribution">
+            <input type="number" id="age_0_14" name="age_0_14" placeholder="0-14 (%)" step="0.01">
+            <input type="number" id="age_15_64" name="age_15_64" placeholder="15-64 (%)" step="0.01">
+            <input type="number" id="age_65_plus" name="age_65_plus" placeholder="65+ (%)" step="0.01">
+        </div>
+
+        <label>Gender Ratio</label>
+        <div class="gender_ratio">
+            <input type="number" id="male" name="male" placeholder="Male (%)" step="0.01">
+            <input type="number" id="female" name="female" placeholder="Female (%)" step="0.01">
+        </div>
+
+        <label for="gdp">GDP</label>
+        <input type="number" step="0.01" id="gdp" name="gdp">
+
+        <label for="average_income">Average Income</label>
+        <input type="number" step="0.01" id="average_income" name="average_income">
+
+        <label for="unemployment_rate">Unemployment Rate</label>
+        <input type="number" step="0.01" id="unemployment_rate" name="unemployment_rate">
+
+        <label for="literacy_rate">Literacy Rate</label>
+        <input type="number" step="0.01" id="literacy_rate" name="literacy_rate">
+
+        <label for="life_expectancy">Life Expectancy</label>
+        <input type="number" step="0.01" id="life_expectancy" name="life_expectancy">
+
+        <label for="happiness_index">Happiness Index</label>
+        <input type="number" step="0.001" id="happiness_index" name="happiness_index">
+
+        <label for="crime_index">Crime Index</label>
+        <input type="number" step="0.01" id="crime_index" name="crime_index">
+
+        <label for="protest_frequency">Protest Frequency</label>
+        <input type="text" id="protest_frequency" name="protest_frequency">
+
+        <label for="government_structure">Government Structure</label>
+        <textarea id="government_structure" name="government_structure"></textarea>
+
+        <label for="political_parties">Political Parties (JSON)</label>
+        <textarea id="political_parties" name="political_parties"></textarea>
+
+        <label for="terrain_features">Terrain Features (JSON)</label>
+        <textarea id="terrain_features" name="terrain_features"></textarea>
+
+        <label for="rare_resources">Rare Resources (JSON)</label>
+        <textarea id="rare_resources" name="rare_resources"></textarea>
+
+        <label for="cultural_features">Cultural Features (JSON)</label>
+        <textarea id="cultural_features" name="cultural_features"></textarea>
+
+        <label for="social_groups">Social Groups (JSON)</label>
+        <textarea id="social_groups" name="social_groups"></textarea>
+
+        <label for="media_environment">Media Environment</label>
+        <textarea id="media_environment" name="media_environment"></textarea>
+
+        <label for="social_media_usage">Social Media Usage (JSON)</label>
+        <textarea id="social_media_usage" name="social_media_usage"></textarea>
+
+        <button type="submit">Update Country Data</button>
+        <button type="button" class="leave" onclick="location.href='worldmap.html';">Leave</button>
+    </form>
+
+<script>
+    async function fetchCountryData(countryId) {
+        try {
+            const response = await fetch(`http://localhost:5000/api/countries/id/${countryId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (!response.ok) throw new Error('Failed to fetch country data');
+            const countryData = await response.json();
+            populateForm(countryData);
+        } catch (error) {
+            console.error('Error fetching country data:', error);
+        }
+    }
+
+    function populateForm(data) {
+        document.getElementById('countryid').value = data.countryid; 
+        document.getElementById('name').value = data.name;
+        document.getElementById('population').value = data.population;
+        document.getElementById('age_0_14').value = data.age_distribution['0-14'] || '';
+        document.getElementById('age_15_64').value = data.age_distribution['15-64'] || '';
+        document.getElementById('age_65_plus').value = data.age_distribution['65+'] || '';
+        document.getElementById('male').value = data.gender_ratio.male || '';
+        document.getElementById('female').value = data.gender_ratio.female || '';
+        document.getElementById('gdp').value = data.gdp;
+        document.getElementById('average_income').value = data.average_income;
+        document.getElementById('unemployment_rate').value = data.unemployment_rate;
+        document.getElementById('literacy_rate').value = data.literacy_rate;
+        document.getElementById('life_expectancy').value = data.life_expectancy;
+        document.getElementById('happiness_index').value = data.happiness_index;
+        document.getElementById('crime_index').value = data.crime_index;
+        document.getElementById('protest_frequency').value = data.protest_frequency;
+        document.getElementById('government_structure').value = data.government_structure;
+        document.getElementById('political_parties').value = JSON.stringify(data.political_parties);
+        document.getElementById('terrain_features').value = JSON.stringify(data.terrain_features);
+        document.getElementById('rare_resources').value = JSON.stringify(data.rare_resources);
+        document.getElementById('cultural_features').value = JSON.stringify(data.cultural_features);
+        document.getElementById('social_groups').value = JSON.stringify(data.social_groups);
+        document.getElementById('media_environment').value = data.media_environment;
+        document.getElementById('social_media_usage').value = JSON.stringify(data.social_media_usage);
+    }
+
+    async function updateCountryData(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const countryId = document.getElementById('countryid').value;
+        const updatedData = {
+            name: document.getElementById('name').value,
+            population: document.getElementById('population').value,
+            age_distribution: {
+                '0-14': document.getElementById('age_0_14').value,
+                '15-64': document.getElementById('age_15_64').value,
+                '65+': document.getElementById('age_65_plus').value
+            },
+            gender_ratio: {
+                male: document.getElementById('male').value,
+                female: document.getElementById('female').value
+            },
+            gdp: document.getElementById('gdp').value,
+            average_income: document.getElementById('average_income').value,
+            unemployment_rate: document.getElementById('unemployment_rate').value,
+            literacy_rate: document.getElementById('literacy_rate').value,
+            life_expectancy: document.getElementById('life_expectancy').value,
+            happiness_index: document.getElementById('happiness_index').value,
+            crime_index: document.getElementById('crime_index').value,
+            protest_frequency: document.getElementById('protest_frequency').value,
+            government_structure: document.getElementById('government_structure').value,
+            political_parties: JSON.parse(document.getElementById('political_parties').value || '{}'),
+            terrain_features: JSON.parse(document.getElementById('terrain_features').value || '{}'),
+            rare_resources: JSON.parse(document.getElementById('rare_resources').value || '{}'),
+            cultural_features: JSON.parse(document.getElementById('cultural_features').value || '{}'),
+            social_groups: JSON.parse(document.getElementById('social_groups').value || '{}'),
+            media_environment: document.getElementById('media_environment').value,
+            social_media_usage: JSON.parse(document.getElementById('social_media_usage').value || '{}')
+        };
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/countries/${countryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (!response.ok) throw new Error('Failed to update country data');
+            const result = await response.json();
+            alert(result.message); // Show success message
+        } catch (error) {
+            console.error('Error updating country data:', error);
+            alert('Failed to update country data');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = localStorage.getItem('token'); 
+        if (token) {
+            const decoded = jwt_decode(token); 
+            const userCountryId = decoded.countryid;
+            
+            // Auto-fill if user has a valid country ID
+            if (userCountryId !== 0) {
+                document.getElementById('countryid').value = userCountryId;
+                fetchCountryData(userCountryId);
+            } else {
+                // Clear the form if userCountryId is 0
+                document.getElementById('countryid').value = '';
+            }
+        } else {
+            console.error('No token found');
+        }
+
+        const form = document.getElementById('edit-country-form');
+        form.addEventListener('submit', updateCountryData);
+        
+        // Proper preview button event listener
+        document.getElementById('preview-btn').addEventListener('click', function() {
+            const countryId = document.getElementById('countryid').value;
+            if (countryId) {
+                fetchCountryData(countryId);
+            } else {
+                alert('Please enter a Country ID first');
+            }
+        });
+    });
+</script>
+</body>
+</html>
