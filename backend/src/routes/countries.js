@@ -25,6 +25,17 @@ router.get('/name/:countryName', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/id/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const country = await Country.findByPk(id);
+    if (!country) return res.status(404).json({ error: 'Country not found' });
+    res.json(country);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch country data' });
+  }
+});
+
 router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
