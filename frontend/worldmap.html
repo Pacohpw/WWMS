@@ -1058,7 +1058,9 @@
 
 
             document.getElementById('logout-btn').addEventListener('click', () => {
-                alert('You have logged out.');
+                localStorage.removeItem('token'); 
+                alert('You have successfully logged out.');
+                window.location.href = 'loginregister.html';
             });
 
             document.getElementById('edit-btn').addEventListener('click', () => {
