@@ -39,7 +39,13 @@ router.post('/register', async (req, res) => {
       if (countryid === "0") {
           return res.status(400).json({ error: 'Invalid country selection' });
       }
-  }
+      // Validate manager’s countryid is one of the 15 valid IDs
+      const country = await Country.findByPk(countryid);
+      if (!country) {
+        return res.status(400).json({ error: 'Invalid country selection' });
+      }
+    }
+  
 
     // --------------------------
     // Manager quota validation
