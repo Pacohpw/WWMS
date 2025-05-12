@@ -218,14 +218,20 @@
             crime_index: document.getElementById('crime_index').value,
             protest_frequency: document.getElementById('protest_frequency').value,
             government_structure: document.getElementById('government_structure').value,
-            political_parties: JSON.parse(document.getElementById('political_parties').value || '{}'),
-            terrain_features: JSON.parse(document.getElementById('terrain_features').value || '{}'),
-            rare_resources: JSON.parse(document.getElementById('rare_resources').value || '{}'),
-            cultural_features: JSON.parse(document.getElementById('cultural_features').value || '{}'),
-            social_groups: JSON.parse(document.getElementById('social_groups').value || '{}'),
-            media_environment: document.getElementById('media_environment').value,
-            social_media_usage: JSON.parse(document.getElementById('social_media_usage').value || '{}')
         };
+        
+        // JSON parsing with error handling
+        try {
+            updatedData.political_parties = JSON.parse(document.getElementById('political_parties').value || '{}');
+            updatedData.terrain_features = JSON.parse(document.getElementById('terrain_features').value || '{}');
+            updatedData.rare_resources = JSON.parse(document.getElementById('rare_resources').value || '{}');
+            updatedData.cultural_features = JSON.parse(document.getElementById('cultural_features').value || '{}');
+            updatedData.social_groups = JSON.parse(document.getElementById('social_groups').value || '{}');
+            updatedData.social_media_usage = JSON.parse(document.getElementById('social_media_usage').value || '{}');
+        } catch (e) {
+            alert(`Please enter valid JSON for one of the fields: ${e.message}`);
+            return; // Stop further execution if JSON is invalid
+        }
 
         try {
             const response = await fetch(`https://wwms-backend.onrender.com/api/countries/${countryId}`, {
@@ -267,7 +273,6 @@
         const form = document.getElementById('edit-country-form');
         form.addEventListener('submit', updateCountryData);
         
-        // Proper preview button event listener
         document.getElementById('preview-btn').addEventListener('click', function() {
             const countryId = document.getElementById('countryid').value;
             if (countryId) {
