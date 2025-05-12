@@ -45,6 +45,8 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const confirmPassword = document.getElementById('confirmPassword').value;
     const countryid = document.getElementById('countryId').value; 
     const role = document.getElementById('role').value; 
+    const licenseKey = document.getElementById('licenseKey').value; 
+    console.log(licenseKey);
 
     if (password !== confirmPassword) {
         alert("Passwords do not match!");
@@ -57,7 +59,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, password, countryid, role })
+            body: JSON.stringify({ username, password, countryid, role, licenseKey})
         });
 
         const data = await response.json();
