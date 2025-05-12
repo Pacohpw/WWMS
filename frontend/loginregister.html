@@ -11,8 +11,6 @@
 </head>
 <body>
     <section>
-        
-    
         <div class="wrapper">
             <span class="icon-close"><ion-icon name="close-outline"></ion-icon></span>
            <div class="form-box login">
@@ -26,10 +24,6 @@
                     <div class="input-box">
                         <input type="password" id="loginPassword" placeholder="Password" required>
                         <i class='bx bx-lock-alt' ></i>
-                    </div>
-                    <div class="remember-forgot">
-                        <label><input type="checkbox"> Remeber me</label>
-                        <!-- <a href="#">Forgot Password?</a> -->
                     </div>
 
                     <button type="submit" class="btn">Login</button>
@@ -87,10 +81,10 @@
                         </select>
                         <i class='bx bxs-user'></i>
                     </div>
-    
-                    <div class="remember-forgot">
-                        <label><input type="checkbox"> I agree to the terms & conditions</label>
-                        
+
+                    <div class="input-box license-key">
+                        <input type="text" id="licenseKey" placeholder="License Key (AAAA-BBBB-CCCC-DDDD)" required pattern="^[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-[A-Z]{4}$">
+                        <i class='bx bxs-key'></i>
                     </div>
     
                     <button type="submit" class="btn">Register</button>
