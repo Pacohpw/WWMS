@@ -21,7 +21,7 @@ section {
 .wrapper {
     position: relative;
     width: 420px;
-    height: 450px;
+    height: 400px;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, .2);
     backdrop-filter: blur(20px);
@@ -36,7 +36,7 @@ section {
 }
 
 .wrapper.active {
-    height: 650px;
+    height: 600px;
 }
 
 .wrapper h1 {
