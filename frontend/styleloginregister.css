@@ -36,7 +36,7 @@ section {
 }
 
 .wrapper.active {
-    height: 600px;
+    height: 670px;
 }
 
 .wrapper h1 {
@@ -193,4 +193,24 @@ section {
         border: none;
         border-radius: 0;
     }
+}
+
+.input-box.license-key {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0; 
+    font-size: 12px;
+}
+
+.input-box.license-key input {
+    width: 100%; 
+    height: 50px; 
+    margin-right: 5px; 
+    padding: 10px;
+    font-size: 14px;
+}
+
+.input-box.license-key input:last-child {
+    margin-right: 0; 
 }
