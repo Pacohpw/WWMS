@@ -36,9 +36,7 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'Admin must use countryid = 0' });
       }
     } else {
-      // Validate manager’s countryid is one of the 14 valid IDs
-      const country = await Country.findByPk(countryid);
-      if (!country) {
+      if (countryid === "0") {
           return res.status(400).json({ error: 'Invalid country selection' });
       }
   }
