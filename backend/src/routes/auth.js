@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'An admin already exists in the system' });
       }
       // Enforce countryid = 0 for admin
-      if (countryid !== 0) {
+      if (countryid !== "0") {
         return res.status(400).json({ error: 'Admin must use countryid = 0' });
       }
     } else {
