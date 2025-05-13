@@ -6,6 +6,7 @@ This repo contains **both** server (Express + MySQL + Socket.IO) **and** client
 The system supports chat in differenet countries managers and admin and specific Country Map Visualization and Editting with simple account management.
 
 ## The whole structure is: 
+```text
 WWMS/
 ├── backend/ # Node / Express / Sequelize
 │ ├── src/ … # (middlewares, routes, models, app.js, …)
@@ -16,6 +17,7 @@ WWMS/
 ├── package-lock.json
 ├── .gitignore # ignore the security files
 └── README.md # ← you are here
+```
 
 ## 1.Features
 * **Auth / JWT**  
@@ -61,5 +63,5 @@ Note: DB is local-only; the public URL works only while the database server is u
 ## 6 Contact
 If you have any questions or important reports, feel free to contact one of these three emails:  <1155176869@link.cuhk.edu.hk>, <1155177289@link.cuhk.edu.hk> or <1155192095@link.cuhk.edu.hk>
 
-Enjoy Management! 
+**Enjoy World Management!** 
 
