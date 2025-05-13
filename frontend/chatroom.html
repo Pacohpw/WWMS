@@ -191,6 +191,8 @@
       const colorIndex = hashString(username) % colors.length;
       contentElement.style.backgroundColor = colors[colorIndex];
 
+      usernameElement.appendChild(timeElement);
+
       messageBlock.appendChild(usernameElement);
       messageBlock.appendChild(contentElement);
       messagesContainer.appendChild(messageBlock);
