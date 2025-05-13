@@ -21,6 +21,7 @@ WWMS/
 * **Auth / JWT**  
   * exactly **1 admin** in the system  
   * each of **14 regions** may have **≤ 5 managers**
+* **World-map visualisation & in-browser editing** via SVG over HTML
 * **Country & Chat APIs** (REST)
 * **WebSocket chat** via Socket.IO
 * **MySQL** persistence
@@ -44,20 +45,18 @@ git clone https://github.com/Pacohpw/WWMS.git WWMS
 cd WWMS
 # install root conveniences (if any scripts live here)
 npm install
-
-bash```
+```
 
 ## 4 Environment variables
 
 backend/.env is zipped in the file with the database connection information needed.
 frontend/.env (I am not sure whether there is)
 
-
 ## 5 Deployment
 
 We have deployed our project(frontend and backend) to Render (a cloud server) with free tier(512MB and 0.1CPU), which is allowed a maximum of 30-40 users at the same time.
 The URL is: https://wwms-frontend.onrender.com/loginregister.html
-For the database, it is deployed in local. Hence, iff the database is started, the URL on Render is available.
+Note: DB is local-only; the public URL works only while the database server is up
 
 ## 6 Contact
 If you have any questions or important reports, feel free to contact one of these three emails:  <1155176869@link.cuhk.edu.hk>, <1155177289@link.cuhk.edu.hk> or <1155192095@link.cuhk.edu.hk>
