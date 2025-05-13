@@ -119,7 +119,7 @@
         
         if (result.success && Array.isArray(result.data)) {
           result.data.forEach(msg => {
-            addMessage(msg.username, msg.content, msa.createAt);
+            addMessage(msg.username, msg.content, msg.createAt);
           });
         } else {
           console.error('Invalid response format:', result);
