@@ -51,17 +51,18 @@ npm install
 
 ## 4 Environment variables
 
-backend/.env is zipped in the file with the database connection information needed.
+backend/.env is zipped in the file with the database connection information needed.  
 frontend/.env (I am not sure whether there is)
 
 ## 5 Deployment
 
-We have deployed our project(frontend and backend) to Render (a cloud server) with free tier(512MB and 0.1CPU), which is allowed a maximum of 30-40 users at the same time.
-The URL is: https://wwms-frontend.onrender.com/loginregister.html
+We have deployed our project(frontend and backend) to Render (a cloud server) with free tier(512MB and 0.1CPU), which is allowed a maximum of 30-40 users at the same time.  
+The URL is: https://wwms-frontend.onrender.com/loginregister.html  
 Note: DB is local-only; the public URL works only while the database server is up
 
 ## 6 Contact
-If you have any questions or important reports, feel free to contact one of these three emails:  <1155176869@link.cuhk.edu.hk>, <1155177289@link.cuhk.edu.hk> or <1155192095@link.cuhk.edu.hk>
+If you have any questions or important reports, feel free to contact one of these three emails:  
+<1155176869@link.cuhk.edu.hk>, <1155177289@link.cuhk.edu.hk> or <1155192095@link.cuhk.edu.hk>
 
 **Enjoy World Management!** 
 
