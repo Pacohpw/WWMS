@@ -45,6 +45,8 @@ cd WWMS
 # install root conveniences (if any scripts live here)
 npm install
 
+bash```
+
 ## 4 Environment variables
 
 backend/.env is zipped in the file with the database connection information needed.
