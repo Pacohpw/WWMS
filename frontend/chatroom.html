@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Chatroom</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+    }
+    #chat-container {
+      flex: 1;
+      width: 100%;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 0;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+    #messages {
+      flex: 1;
+      height: 300px;
+      border: 1px solid #ddd;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    #message-form {
+      display: flex;
+      gap: 10px;
+    }
+    #message-input {
+      flex-grow: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .message-block {
+      border: 1px solid #fdfdfd;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .username {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .content {
+      background-color: #e7f3fe; /* Light blue background */
+      padding: 8px;
+      border-radius: 4px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+</head>
+<body>
+  <div id="chat-container">
+    <h1>Chatroom</h1>
+    <div id="messages"></div>
+    <form id="message-form">
+      <input type="text" id="message-input" placeholder="Type your message..." required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/chat/messages';
+    const messagesContainer = document.getElementById('messages');
+    const form = document.getElementById('message-form');
+
+    const colors = [
+      '#e7f3fe', '#fef8e7', '#e7fef8', '#f8e7fe', '#fee7e7',
+      '#e7fefe', '#fef0e7', '#e7e7fe', '#feefe7', '#e7fee7'
+    ];
+
+    function hashString(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0; 
+      }
+      return Math.abs(hash);
+    }
+
+    // Load previous messages
+    async function loadMessages() {
+      try {
+        const response = await fetch(API_URL);
+        const result = await response.json();
+        
+        if (result.success && Array.isArray(result.data)) {
+          result.data.forEach(msg => {
+            addMessage(msg.username, msg.content);
+          });
+        } else {
+          console.error('Invalid response format:', result);
+        }
+      } catch (err) {
+        console.error('Failed to load messages:', err);
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const messageInput = document.getElementById('message-input');
+      const message = messageInput.value.trim();
+      
+      if (!message) return;
+      console.log('Message:', message);
+
+      const token = localStorage.getItem('token');
+      let username = 'Anonymous';
+
+      if (token) {
+        const decoded = jwt_decode(token);
+        console.log('Decoded token:', decoded);
+        username = decoded.username || username;
+      }
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            content: message,
+            username: username
+          })
+        });
+
+        const result = await response.json();
+        
+        if (result.success) {
+          addMessage(username, result.data.content);
+          messageInput.value = ''; // Clear the message input
+        } else {
+          throw new Error(result.error || 'Failed to send');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert(err.message);
+      }
+    });
+
+    function addMessage(username, content) {
+      const messageBlock = document.createElement('div');
+      messageBlock.className = 'message-block';
+
+      const usernameElement = document.createElement('div');
+      usernameElement.className = 'username';
+      usernameElement.textContent = username;
+
+      const contentElement = document.createElement('div');
+      contentElement.className = 'content';
+      contentElement.textContent = content;
+
+      const colorIndex = hashString(username) % colors.length;
+      contentElement.style.backgroundColor = colors[colorIndex];
+
+      messageBlock.appendChild(usernameElement);
+      messageBlock.appendChild(contentElement);
+      messagesContainer.appendChild(messageBlock);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Initial load
+    loadMessages();
+  </script>
+</body>
+</html>
